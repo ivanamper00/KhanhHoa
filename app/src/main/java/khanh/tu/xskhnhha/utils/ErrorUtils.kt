@@ -10,5 +10,6 @@ fun writeLogs(e: Exception){
     Log.d("APPLICATION_LOGS", """
         Error: ${e.cause?.message}
         Description: ${e.message}
+        Class: ${e.javaClass.simpleName}
     """.trimIndent())
 }

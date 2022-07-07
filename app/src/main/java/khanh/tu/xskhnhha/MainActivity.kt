@@ -32,12 +32,10 @@ class MainActivity : AppCompatActivity() {
             when(response){
                 is Response.Success -> {
                     if(!response.data.isNullOrEmpty()){
-                        startActivity(WebViewActivity.createIntent(this, response.data ?: ""))
-                        finish()
+                        toNextActivity(response.data)
                     }else {
                         // execute code if the url is empty
-                        startActivity(NextActivity.createIntent(this))
-                        finish()
+                        toNextActivity()
                     }
                 }
                 is Response.Error -> {
@@ -49,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         else -> {
                             // handling other type of errors
+                            toNextActivity()
                         }
                     }
                 }
@@ -67,13 +66,29 @@ class MainActivity : AppCompatActivity() {
                         }
                         else -> {
                             // handling other type of errors
+                            toNextActivity()
                         }
                     }
                 }
             }
         }
 
-        if(cache.getIsAppRegistered()) viewModel.getUrl(applicationID)
-        else viewModel.registerApp(applicationID)
+        if(isNetworkConnected()){
+            if(cache.getIsAppRegistered()) viewModel.getUrl(applicationID)
+            else viewModel.registerApp(applicationID)
+        }else {
+            // no internet connection handling
+            toNoInternetActivity()
+        }
+    }
+
+    private fun toNextActivity(url: String? = null){
+        startActivity(WebViewActivity.createIntent(this, url ?: "https://www.vietnamyello.com/lottery" ))
+        finish()
+    }
+
+    private fun toNoInternetActivity(){
+        startActivity(NoInternetActivity.createIntent(this))
+        finish()
     }
 }
