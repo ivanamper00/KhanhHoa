@@ -1,4 +1,4 @@
-package khanh.tu.xskhnhha.jump_code.ui.web_view
+package khanh.tu.xskhnhha
 
 import android.content.Context
 import android.content.Intent

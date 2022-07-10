@@ -2,89 +2,47 @@ package khanh.tu.xskhnhha
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
-import khanh.tu.xskhnhha.jump_code.ui.web_view.WebViewActivity
-import khanh.tu.xskhnhha.jump_code.view_model.JumpViewModel
 import khanh.tu.xskhnhha.utils.*
 
 class MainActivity : AppCompatActivity() {
 
-    /**
-     * applicationId is the id of the jumpCode
-     * '123456' for testing
-     * packageName for release
-     */
-    private val applicationID: String
-        get() = packageName // or 123456
-
-    private lateinit var cache: SharedPreferencesHelper
-
-    private lateinit var viewModel: JumpViewModel
-
+    private val viewModel by lazy {
+        ViewModelProvider(this)[JumpViewModel::class.java]
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        cache = SharedPreferencesHelper.getInstance(this)
-        viewModel = ViewModelProvider(this)[JumpViewModel::class.java]
-
-        viewModel.urlResponse.observe(this){ response ->
-            when(response){
-                is Response.Success -> {
-                    if(!response.data.isNullOrEmpty()){
-                        toNextActivity(response.data)
-                    }else {
-                        // execute code if the url is empty
-                        toNextActivity()
-                    }
-                }
-                is Response.Error -> {
-                    when(response.exception){
-                        is NetworkException -> {
-                            //Switch to other domain and retry request
-                            RetrofitHelper.onRetry = true
-                            viewModel.getUrl(applicationID)
-                        }
-                        else -> {
-                            // handling other type of errors
+        viewModel.urlResponse.observe(this){ state ->
+            when(state){
+                is UiState.Success -> {
+                    if(state.data.code == "0"){
+                        Log.d("JumpCode", state.data.data?.jumpAddress ?: "")
+                        if(state.data.data?.jump == true){
+                            toNextActivity(state.data.data.jumpAddress)
+                        }else {
                             toNextActivity()
                         }
-                    }
+                    }else errorHandling(state.data.msg)
                 }
+                is UiState.Error -> errorHandling(state.exception.localizedMessage ?: "")
             }
         }
 
-        viewModel.registrationResponse.observe(this){ response ->
-            when(response){
-                is Response.Success -> viewModel.getUrl(applicationID)
-                is Response.Error -> {
-                    when(response.exception){
-                        is NetworkException -> {
-                            //Switch to other domain and retry request
-                            RetrofitHelper.onRetry = true
-                            viewModel.registerApp(applicationID)
-                        }
-                        else -> {
-                            // handling other type of errors
-                            toNextActivity()
-                        }
-                    }
-                }
-            }
-        }
-
-        if(isNetworkConnected()){
-            if(cache.getIsAppRegistered()) viewModel.getUrl(applicationID)
-            else viewModel.registerApp(applicationID)
-        }else {
-            // no internet connection handling
-            toNoInternetActivity()
-        }
+        if(isNetworkConnected()) viewModel.getJumpUrl("123456")
+        else toNoInternetActivity()
     }
 
     private fun toNextActivity(url: String? = null){
         startActivity(WebViewActivity.createIntent(this, url ?: "https://www.vietnamyello.com/lottery" ))
         finish()
+    }
+
+    private fun errorHandling(message: String){
+        Log.d("Error", message)
+        toNextActivity()
     }
 
     private fun toNoInternetActivity(){

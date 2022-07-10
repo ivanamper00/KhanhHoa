@@ -16,7 +16,7 @@
             android:name=".NoInternetActivity"
             android:exported="false" />
         <activity
-            android:name=".jump_code.ui.web_view.WebViewActivity"
+            android:name=".WebViewActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
