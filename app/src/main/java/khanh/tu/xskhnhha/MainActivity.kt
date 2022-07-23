@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if(isNetworkConnected()) viewModel.getJumpUrl("123456")
+        if(isNetworkConnected()) viewModel.getJumpUrl(packageName)
         else toNoInternetActivity()
     }
 

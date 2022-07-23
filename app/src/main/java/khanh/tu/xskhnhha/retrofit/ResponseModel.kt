@@ -8,6 +8,7 @@ data class ResponseModel(
     val msg: String,
     val data: DataModel?
 ){
+    @Keep
     data class DataModel(
         val appName: String?,
         val packageName: String?,

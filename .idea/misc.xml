@@ -3,9 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.24814814814814815" />
+        <entry key="app/src/main/res/drawable/custom_progress_bar.xml" value="0.2595" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.31023550724637683" />
         <entry key="app/src/main/res/layout/activity_next.xml" value="0.25104166666666666" />
         <entry key="app/src/main/res/layout/activity_webview.xml" value="0.2786458333333333" />
+        <entry key="app/src/main/res/layout/custom_jump_web_view.xml" value="0.25416666666666665" />
         <entry key="imports/src/main/res/layout/activity_webview.xml" value="0.31023550724637683" />
       </map>
     </option>
